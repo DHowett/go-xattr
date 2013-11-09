@@ -24,7 +24,11 @@ func Setxattr(path, name string, data []byte, offset uint32, options int) (err e
 		C.free(unsafe.Pointer(cattrname))
 	}()
 
-	ret, err := C.setxattr(cpath, cattrname, unsafe.Pointer(&data[0]), C.size_t(len(data)), C.u_int32_t(offset), C.int(options))
+	var ptr unsafe.Pointer
+	if len(data) > 0 {
+		ptr = unsafe.Pointer(&data[0])
+	}
+	ret, err := C.setxattr(cpath, cattrname, ptr, C.size_t(len(data)), C.u_int32_t(offset), C.int(options))
 	if ret == -1 {
 		return
 	}
